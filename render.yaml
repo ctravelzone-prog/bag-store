@@ -1,0 +1,14 @@
+# Render blueprint — Touch of Sabrina bag store (free plan, preview only).
+# NOTE: Render free tier has an ephemeral filesystem, so data/*.json
+# (products/orders) resets on redeploy/restart. For permanent data,
+# use a paid Render disk or a managed DB later.
+services:
+  - type: web
+    name: bag-store
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
