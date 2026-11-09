@@ -11,7 +11,7 @@ const NAV = [
   ['categories', 'Categories', IconTag], ['customers', 'Customers', IconUsers], ['coupons', 'Coupons', IconPercent],
   ['sales', 'Sales', IconChart], ['messages', 'Messages', IconMail], ['settings', 'Settings', IconSettings],
 ];
-const EMPTY_PRODUCT = { name: '', slug: '', category: 'Handbag', originalPrice: '', discountPercent: '', currentPrice: '', stock: '', description: '', image: '', colors: 'Black' };
+const EMPTY_PRODUCT = { name: '', slug: '', category: 'Handbag', originalPrice: '', discountPercent: '', currentPrice: '', stock: '', description: '', image: '', video: '', colors: 'Black' };
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
   const [login, setLogin] = useState({ email: '', password: '' });
@@ -36,6 +36,24 @@ export default function AdminPage() {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [giveForm, setGiveForm] = useState({});
   const [messages, setMessages] = useState([]);
+  const [uploading, setUploading] = useState(''); // '' | 'photo' | 'video'
+
+  // ---- Upload a photo / short video from the device ----
+  async function uploadFile(e, kind) {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    setUploading(kind); setErr('');
+    const fd = new FormData(); fd.append('file', file);
+    try {
+      const r = await fetch('/api/upload', { method: 'POST', body: fd });
+      const d = await r.json();
+      if (!r.ok) { setErr(d.error || 'Upload failed. Please try again.'); return; }
+      setPform(prev => ({ ...prev, [kind === 'photo' ? 'image' : 'video']: d.url }));
+      setMsg(kind === 'photo' ? 'Photo uploaded!' : 'Video uploaded!');
+    } catch { setErr('Upload failed — please check your connection and try again.'); }
+    setUploading('');
+  }
 
   useEffect(() => { if (typeof window !== 'undefined' && localStorage.getItem('tos-admin') === '1') setAuthed(true); }, []);
   async function load() {
@@ -89,7 +107,7 @@ export default function AdminPage() {
     e.preventDefault(); setMsg(''); setErr('');
     if (!validateProduct()) return;
     const disc = Number(pform.discountPercent) || 0;
-    const payload = { name: pform.name.trim(), slug: pform.slug.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-') || pform.name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-'), category: pform.category, price: Number(pform.currentPrice), oldPrice: disc > 0 && pform.originalPrice ? Number(pform.originalPrice) : null, stock: Number(pform.stock), colors: pform.colors.split(',').map(s => s.trim()).filter(Boolean), description: pform.description, image: pform.image };
+    const payload = { name: pform.name.trim(), slug: pform.slug.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-') || pform.name.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-'), category: pform.category, price: Number(pform.currentPrice), oldPrice: disc > 0 && pform.originalPrice ? Number(pform.originalPrice) : null, stock: Number(pform.stock), colors: pform.colors.split(',').map(s => s.trim()).filter(Boolean), description: pform.description, image: pform.image, video: (pform.video || '').trim() };
     const r = await fetch('/api/products', { method: editing ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(editing ? { ...payload, id: editing.id } : payload) });
     const d = await r.json();
     if (!r.ok) { setErr(d.error || 'Could not save the product. Please try again.'); return; }
@@ -99,7 +117,7 @@ export default function AdminPage() {
   function editProduct(p) {
     const disc = p.oldPrice && p.oldPrice > p.price ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
     setEditing(p);
-    setPform({ name: p.name, slug: p.slug, category: p.category, originalPrice: p.oldPrice ? String(p.oldPrice) : String(p.price), discountPercent: disc ? String(disc) : '', currentPrice: String(p.price), stock: String(p.stock), description: p.description || '', image: p.image || '', colors: (p.colors || []).join(', ') });
+    setPform({ name: p.name, slug: p.slug, category: p.category, originalPrice: p.oldPrice ? String(p.oldPrice) : String(p.price), discountPercent: disc ? String(disc) : '', currentPrice: String(p.price), stock: String(p.stock), description: p.description || '', image: p.image || '', video: p.video || '', colors: (p.colors || []).join(', ') });
     setShowProductForm(true); window.scrollTo(0, 0);
   }
   async function delProduct(id) { if (!confirm('Delete this product? This cannot be undone.')) return; await fetch('/api/products?id=' + id, { method: 'DELETE' }); load(); }
@@ -278,7 +296,7 @@ export default function AdminPage() {
             <div className="mt-5 space-y-5">
               <div className="bg-gold/15 border border-gold/40 rounded-xl p-4 text-sm">
                 <p className="font-bold">How to add a product — 3 easy steps</p>
-                <ol className="list-decimal pl-5 mt-1 space-y-0.5"><li>Click <b>+ Add Product</b> below and write the name and photo link.</li><li>Choose the category, then write the price (Original / Discount % / Right Now Price fill each other in automatically).</li><li>Write the stock, then click the big <b>Add Product</b> button — it appears on the Shop page at once.</li></ol>
+                <ol className="list-decimal pl-5 mt-1 space-y-0.5"><li>Click <b>+ Add Product</b> below and write the name, then upload a photo or short video from your device (or paste a photo/video link).</li><li>Choose the category, then write the price (Original / Discount % / Right Now Price fill each other in automatically).</li><li>Write the stock, then click the big <b>Add Product</b> button — it appears on the Shop page at once.</li></ol>
               </div>
               {!showProductForm ? (
                 <button onClick={() => { setEditing(null); setPform(EMPTY_PRODUCT); setShowProductForm(true); }} className="bg-maroon text-white font-bold px-6 py-3 rounded-full flex items-center gap-2 text-lg"><IconPlus size={20} /> Add Product</button>
@@ -287,13 +305,21 @@ export default function AdminPage() {
                   <h3 className="font-bold text-lg">{editing ? 'Edit Product: ' + editing.name : 'Add a New Product'}</h3>
                   <p className="text-xs text-gray-400 mt-1">Fields marked * are needed. Fields marked “Optional” can be left empty.</p>
                   <div className="mt-4 space-y-5">
-                    <div><p className="font-semibold">Step 1 — Name &amp; Photo</p>
+                    <div><p className="font-semibold">Step 1 — Name, Photo &amp; Short Video</p>
                       <input required value={pform.name} onChange={e => setPform({ ...pform, name: e.target.value })} placeholder="Product name *  (e.g. Bow Bag)" className="border rounded-lg px-3 py-2.5 w-full mt-2" />
                       {perr.name && <p className="text-red-600 text-sm mt-1">{perr.name}</p>}
                       <input value={pform.slug} onChange={e => setPform({ ...pform, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') })} placeholder="Link name / slug — Optional (auto-filled from the name)" disabled={!!editing} className="border rounded-lg px-3 py-2.5 w-full mt-2 disabled:bg-gray-100" />
                       <input value={pform.image} onChange={e => setPform({ ...pform, image: e.target.value })} placeholder="Photo link — paste an image URL (Optional, but a photo sells much better)" className="border rounded-lg px-3 py-2.5 w-full mt-2" />
-                      <p className="text-xs text-gray-400 mt-1">Paste a full image link (https://...). The photo preview below updates as you type.</p>
+                      <p className="text-xs text-gray-400 mt-1">Paste a full image link (https://...), or upload a photo from your device below. The photo preview updates as you type or upload.</p>
+                      <div className="grid sm:grid-cols-2 gap-3 mt-2">
+                        <label className="border rounded-lg px-3 py-2.5 text-sm font-semibold cursor-pointer bg-gray-50 hover:bg-gray-100">📷 Upload photo from your device <span className="block text-xs font-normal text-gray-500 mt-0.5">JPG / PNG / WebP / GIF — max 5 MB</span><input type="file" accept="image/*" onChange={e => uploadFile(e, 'photo')} className="block mt-1 text-xs font-normal w-full" /></label>
+                        <label className="border rounded-lg px-3 py-2.5 text-sm font-semibold cursor-pointer bg-gray-50 hover:bg-gray-100">🎬 Upload short video <span className="block text-xs font-normal text-gray-500 mt-0.5">MP4 / WebM / MOV — max 20 MB</span><input type="file" accept="video/*" onChange={e => uploadFile(e, 'video')} className="block mt-1 text-xs font-normal w-full" /></label>
+                      </div>
+                      {uploading && <p className="text-maroon text-sm font-semibold mt-2">Uploading {uploading === 'photo' ? 'photo' : 'video'}… please wait.</p>}
                       {pform.image && <img src={pform.image} alt="Photo preview" className="w-32 h-32 object-cover rounded-lg mt-2 border" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+                      <input value={pform.video} onChange={e => setPform({ ...pform, video: e.target.value })} placeholder="Short video link — paste a video URL (Optional)" className="border rounded-lg px-3 py-2.5 w-full mt-2" />
+                      <p className="text-xs text-gray-400 mt-1">Or paste a video link here. The video plays on the product page.</p>
+                      {pform.video && <video src={pform.video} controls muted loop playsInline className="w-full max-w-sm rounded-lg mt-2 border" />}
                     </div>
                     <div><p className="font-semibold">Step 2 — Category</p>
                       <select value={pform.category} onChange={e => setPform({ ...pform, category: e.target.value })} className="border rounded-lg px-3 py-2.5 w-full mt-2">{categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}</select>

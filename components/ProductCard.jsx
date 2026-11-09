@@ -13,7 +13,11 @@ export default function ProductCard({ p }) {
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition border border-gray-100 flex flex-col relative">
       <Link href={'/product/' + p.slug} className="relative block">
-        <ProductImage src={p.image} alt={p.name} className="w-full h-56 object-cover" />
+        {p.video && !p.image ? (
+          <video src={p.video} muted loop playsInline autoPlay preload="metadata" className="w-full h-56 object-cover bg-black" />
+        ) : (
+          <ProductImage src={p.image} alt={p.name} className="w-full h-56 object-cover" />
+        )}
         {disc > 0 && <span className="absolute top-2 left-2 bg-gold text-black text-xs font-bold px-2 py-1 rounded">-{disc}%</span>}
         {out && <span className="absolute top-2 right-2 bg-black text-white text-xs px-2 py-1 rounded">Out of Stock</span>}
         {low && <span className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded">Only {p.stock} left</span>}

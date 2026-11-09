@@ -31,7 +31,9 @@ export default function ProductDetail({ p, related }) {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <Link href="/shop" className="text-sm text-maroon">← Back to Shop</Link>
       <div className="grid md:grid-cols-2 gap-8 mt-4">
-        <div><ProductImage src={p.image} alt={p.name} className="w-full h-96 object-cover rounded-2xl shadow" />
+        <div>{p.video && <video src={p.video} controls muted loop playsInline className="w-full h-96 object-cover rounded-2xl shadow bg-black" />}
+          {p.image && <ProductImage src={p.image} alt={p.name} className={'w-full h-96 object-cover rounded-2xl shadow' + (p.video ? ' mt-3' : '')} />}
+          {!p.image && !p.video && <ProductImage src={p.image} alt={p.name} className="w-full h-96 object-cover rounded-2xl shadow" />}
           <p className="text-xs text-gray-400 mt-2">Sample product photo (Unsplash). Replace with your real product photo in Admin → Products.</p></div>
         <div>
           <p className="text-sm text-maroon font-semibold uppercase">{p.category}</p>
