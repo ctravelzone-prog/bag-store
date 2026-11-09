@@ -152,23 +152,6 @@ export default function AdminPage() {
     setGiveForm({ ...giveForm, [u.id]: {} }); load();
   }
 
-  if (!authed) return (
-    <div className="max-w-md mx-auto px-4 py-16">
-      <div className="flex justify-center"><LogoLight size={56} /></div>
-      <h1 className="font-serif text-3xl font-bold text-center mt-4">Master Admin</h1>
-      <p className="text-center text-sm text-gray-500 mt-1">Touch of Sabrina — shop owner only.</p>
-      <form onSubmit={doLogin} className="bg-white rounded-xl shadow p-6 mt-6">
-        <label className="text-sm font-semibold">Email</label>
-        <input value={login.email} onChange={e => setLogin({ ...login, email: e.target.value })} required type="email" placeholder="admin@touchofsabrina.local" className="border rounded-lg px-3 py-2.5 w-full mt-1" />
-        <label className="text-sm font-semibold block mt-3">Password</label>
-        <input value={login.password} onChange={e => setLogin({ ...login, password: e.target.value })} required type="password" placeholder="Password" className="border rounded-lg px-3 py-2.5 w-full mt-1" />
-        {loginErr && <p className="text-red-600 text-sm mt-3">{loginErr}</p>}
-        <button className="w-full bg-maroon text-white font-bold py-3 rounded-full mt-4">Login</button>
-        <p className="text-xs text-gray-400 text-center mt-3">Demo login: admin@touchofsabrina.local / admin123<br />Change this password before production use.</p>
-      </form>
-    </div>
-  );
-
   // ---- Dashboard numbers (real data only) ----
   const delivered = orders.filter(o => o.status === 'Delivered');
   const revenue = delivered.reduce((s, o) => s + o.total, 0);
@@ -200,6 +183,24 @@ export default function AdminPage() {
     const uo = orders.filter(o => o.userId === u.id || o.customer?.phone === u.phone || (o.customer?.email && o.customer.email.toLowerCase() === u.email.toLowerCase()));
     return { ...u, orderCount: uo.length, deliveredCount: uo.filter(o => o.status === 'Delivered').length, spent: uo.filter(o => o.status === 'Delivered').reduce((s, o) => s + o.total, 0), orders: uo };
   }), [users, orders]);
+
+  if (!authed) return (
+    <div className="max-w-md mx-auto px-4 py-16">
+      <div className="flex justify-center"><LogoLight size={56} /></div>
+      <h1 className="font-serif text-3xl font-bold text-center mt-4">Master Admin</h1>
+      <p className="text-center text-sm text-gray-500 mt-1">Touch of Sabrina — shop owner only.</p>
+      <form onSubmit={doLogin} className="bg-white rounded-xl shadow p-6 mt-6">
+        <label className="text-sm font-semibold">Email</label>
+        <input value={login.email} onChange={e => setLogin({ ...login, email: e.target.value })} required type="email" placeholder="admin@touchofsabrina.local" className="border rounded-lg px-3 py-2.5 w-full mt-1" />
+        <label className="text-sm font-semibold block mt-3">Password</label>
+        <input value={login.password} onChange={e => setLogin({ ...login, password: e.target.value })} required type="password" placeholder="Password" className="border rounded-lg px-3 py-2.5 w-full mt-1" />
+        {loginErr && <p className="text-red-600 text-sm mt-3">{loginErr}</p>}
+        <button className="w-full bg-maroon text-white font-bold py-3 rounded-full mt-4">Login</button>
+        <p className="text-xs text-gray-400 text-center mt-3">Demo login: admin@touchofsabrina.local / admin123<br />Change this password before production use.</p>
+      </form>
+    </div>
+  );
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 md:py-8">
