@@ -31,29 +31,29 @@ export default function Home({ products, categories = [] }) {
     <div>
       {/* Hero slider — Royal Maroon (Style 1, user-picked) */}
       <section className="bg-maroon text-[#f6ead2]" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-        <div className="max-w-7xl mx-auto px-4 py-14 md:py-20">
-          <div key={slide} className="grid grid-cols-1 md:grid-cols-[1.15fr_.85fr] gap-10 md:gap-8 items-center">
-            <div>
-              <p className="text-gold text-xs md:text-sm tracking-[0.35em] uppercase font-semibold">Touch of Sabrina — Luxury Women&apos;s Bags</p>
-              <h1 className="font-serif mt-5 text-[clamp(2.9rem,6.5vw,4.75rem)] leading-[1.02] font-medium">{slides[slide].headline}</h1>
-              <p className="mt-6 text-[#d9bfae] text-lg max-w-md leading-relaxed">{slides[slide].sub}</p>
-              <div className="mt-8 flex items-center gap-6 flex-wrap">
-                <Link href={slides[slide].href} className="bg-gold text-[#2a0a12] font-semibold tracking-widest uppercase text-sm px-8 py-3.5 hover:brightness-110">{slides[slide].cta}</Link>
+        <div className="max-w-7xl mx-auto px-4 py-10 md:py-20">
+          <div key={slide} className="grid grid-cols-1 md:grid-cols-[1.15fr_.85fr] gap-8 md:gap-8 items-center">
+            <div className="text-center md:text-left">
+              <p className="text-gold text-[11px] md:text-sm tracking-[0.2em] md:tracking-[0.35em] uppercase font-semibold">Touch of Sabrina — Luxury Women&apos;s Bags</p>
+              <h1 className="font-serif mt-5 text-[clamp(2.3rem,9vw,4.75rem)] leading-[1.02] font-medium">{slides[slide].headline}</h1>
+              <p className="mt-5 md:mt-6 text-[#d9bfae] text-base md:text-lg max-w-md mx-auto md:mx-0 leading-relaxed">{slides[slide].sub}</p>
+              <div className="mt-7 md:mt-8 flex flex-col md:flex-row items-center md:items-center justify-center md:justify-start gap-3 md:gap-6">
+                <Link href={slides[slide].href} className="w-full md:w-auto text-center bg-gold text-[#2a0a12] font-semibold tracking-widest uppercase text-sm px-8 py-3.5 hover:brightness-110">{slides[slide].cta}</Link>
                 <Link href="/shop" className="text-sm tracking-widest uppercase font-semibold underline underline-offset-8 decoration-[#f6ead2]/40 hover:decoration-[#f6ead2]">Shop All Bags &rarr;</Link>
               </div>
             </div>
             <figure>
-              <ProductImage key={slides[slide].image} src={slides[slide].image} alt={slides[slide].alt} className="w-full h-[340px] md:h-[460px] object-cover border border-gold p-2" />
+              <ProductImage key={slides[slide].image} src={slides[slide].image} alt={slides[slide].alt} className="w-full h-[240px] md:h-[460px] object-cover border border-gold p-2" />
             </figure>
           </div>
-          <p className="mt-12 text-[11px] md:text-xs text-[#d9bfae] tracking-[0.2em] uppercase">Cash on Delivery <span className="text-gold mx-1">&middot;</span> bKash / Nagad <span className="text-gold mx-1">&middot;</span> Free delivery over &#2547;3,000</p>
-          <div className="mt-8 pt-6 border-t border-[#f6ead2]/20 flex items-center gap-6">
-            <button onClick={() => setSlide((slide - 1 + slides.length) % slides.length)} aria-label="Previous slide" className="text-[#f6ead2]/60 hover:text-[#f6ead2] text-sm tracking-widest uppercase">&larr; Prev</button>
+          <p className="mt-8 md:mt-12 text-center md:text-left text-[11px] md:text-xs text-[#d9bfae] tracking-[0.2em] uppercase">Cash on Delivery <span className="text-gold mx-1">&middot;</span> bKash / Nagad <span className="text-gold mx-1">&middot;</span> Free delivery over &#2547;3,000</p>
+          <div className="mt-6 md:mt-8 pt-5 md:pt-6 border-t border-[#f6ead2]/20 flex items-center justify-center md:justify-start gap-6">
+            <button onClick={() => setSlide((slide - 1 + slides.length) % slides.length)} aria-label="Previous slide" className="hidden md:block text-[#f6ead2]/60 hover:text-[#f6ead2] text-sm tracking-widest uppercase">&larr; Prev</button>
             <div className="flex gap-2">
               {slides.map((_, i) => (<button key={i} onClick={() => setSlide(i)} aria-label={'Go to slide ' + (i + 1)} className={'h-px transition-all ' + (i === slide ? 'bg-gold w-10' : 'bg-[#f6ead2]/30 w-5')} />))}
             </div>
             <p className="font-serif text-lg text-[#f6ead2]/60"><span className="text-[#f6ead2]">{String(slide + 1).padStart(2, '0')}</span><span className="text-sm"> / {String(slides.length).padStart(2, '0')}</span></p>
-            <button onClick={() => setSlide((slide + 1) % slides.length)} aria-label="Next slide" className="text-[#f6ead2]/60 hover:text-[#f6ead2] text-sm tracking-widest uppercase">Next &rarr;</button>
+            <button onClick={() => setSlide((slide + 1) % slides.length)} aria-label="Next slide" className="hidden md:block text-[#f6ead2]/60 hover:text-[#f6ead2] text-sm tracking-widest uppercase">Next &rarr;</button>
           </div>
         </div>
       </section>
