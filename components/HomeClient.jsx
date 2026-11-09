@@ -5,9 +5,9 @@ import ProductCard from './ProductCard';
 import ProductImage from './ProductImage';
 import { IconChevronLeft, IconChevronRight, IconTruck, IconShield, IconCreditCard, CategoryIcon, Stars } from './Icons';
 const SLIDES = [
-  { kicker: 'Vol. 01 — The Signature Edit', headline: (<>Elegance, in<br />every <em className="italic font-normal text-maroon">carry.</em></>), alt: 'Elegance, in every carry.', sub: 'Structured leather, quiet gold hardware — handbags made to be noticed, softly.', cta: 'Shop Handbags', href: '/shop?category=Handbag', image: 'https://images.pexels.com/photos/6650009/pexels-photo-6650009.jpeg?auto=compress&cs=tinysrgb&w=1200', caption: 'The Signature Edit — N° 01' },
-  { kicker: 'Vol. 02 — New Season', headline: (<>New season,<br />new <em className="italic font-normal text-maroon">shine.</em></>), alt: 'New season, new shine.', sub: 'Warm neutrals, rich maroon, soft silhouettes — the new season has arrived.', cta: 'Shop the New Season', href: '/shop', image: 'https://images.pexels.com/photos/4830926/pexels-photo-4830926.jpeg?auto=compress&cs=tinysrgb&w=1200', caption: 'New Season — N° 02' },
-  { kicker: 'Vol. 03 — The Everyday Tote', headline: (<>Carry everything,<br /><em className="italic font-normal text-maroon">beautifully.</em></>), alt: 'Carry everything, beautifully.', sub: 'Your whole day — laptop, wallet, little luxuries — in one elegant tote.', cta: 'Shop Totes', href: '/shop?category=Tote', image: 'https://images.pexels.com/photos/6650014/pexels-photo-6650014.jpeg?auto=compress&cs=tinysrgb&w=1200', caption: 'The Everyday Tote — N° 03' },
+  { headline: (<>Elegance, in<br />every <em className="italic font-normal text-gold">carry.</em></>), alt: 'Elegance, in every carry.', sub: 'Quiet luxury, made for every day — handbags in soft neutrals, warm tan and classic black.', cta: 'Shop Handbags', href: '/shop?category=Handbag', image: 'https://images.pexels.com/photos/6650009/pexels-photo-6650009.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { headline: (<>New season,<br />new <em className="italic font-normal text-gold">shine.</em></>), alt: 'New season, new shine.', sub: 'Warm neutrals, rich maroon, soft silhouettes — the new season has arrived.', cta: 'Shop the New Season', href: '/shop', image: 'https://images.pexels.com/photos/4830926/pexels-photo-4830926.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+  { headline: (<>Carry everything,<br /><em className="italic font-normal text-gold">beautifully.</em></>), alt: 'Carry everything, beautifully.', sub: 'Roomy totes in soft neutrals and classic black — made for every day.', cta: 'Shop Totes', href: '/shop?category=Tote', image: 'https://images.pexels.com/photos/6650014/pexels-photo-6650014.jpeg?auto=compress&cs=tinysrgb&w=1200' },
 ];
 export default function Home({ products, categories = [] }) {
   const [email, setEmail] = useState('');
@@ -29,33 +29,31 @@ export default function Home({ products, categories = [] }) {
   }
   return (
     <div>
-      {/* Hero slider — clean minimal */}
-      <section className="bg-[#FAF6EF] text-neutral-900" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-        <div className="max-w-7xl mx-auto px-4 pt-16 md:pt-24 pb-14 md:pb-20 text-center">
-          <p className="text-maroon text-xs md:text-sm tracking-[0.35em] uppercase font-semibold">Touch of Sabrina — Luxury Women&apos;s Bags</p>
-          <div key={slide}>
-            <p className="mt-10 text-neutral-400 text-xs tracking-[0.25em] uppercase">{slides[slide].kicker}</p>
-            <h1 className="font-serif mt-4 text-[clamp(3rem,8vw,5.5rem)] leading-[1.05] font-medium">{slides[slide].headline}</h1>
-            <p className="mt-6 text-neutral-500 text-lg max-w-xl mx-auto leading-relaxed">{slides[slide].sub}</p>
-            <div className="mt-8 flex items-center justify-center gap-8 flex-wrap">
-              <Link href={slides[slide].href} className="bg-neutral-900 text-white font-semibold tracking-widest uppercase text-sm px-8 py-3.5 hover:bg-neutral-700">{slides[slide].cta}</Link>
-              <Link href="/shop" className="text-sm tracking-widest uppercase font-semibold underline underline-offset-8 decoration-neutral-300 hover:decoration-neutral-900">Shop All Bags &rarr;</Link>
+      {/* Hero slider — Royal Maroon (Style 1, user-picked) */}
+      <section className="bg-maroon text-[#f6ead2]" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+        <div className="max-w-7xl mx-auto px-4 py-14 md:py-20">
+          <div key={slide} className="grid grid-cols-1 md:grid-cols-[1.15fr_.85fr] gap-10 md:gap-8 items-center">
+            <div>
+              <p className="text-gold text-xs md:text-sm tracking-[0.35em] uppercase font-semibold">Touch of Sabrina — Luxury Women&apos;s Bags</p>
+              <h1 className="font-serif mt-5 text-[clamp(2.9rem,6.5vw,4.75rem)] leading-[1.02] font-medium">{slides[slide].headline}</h1>
+              <p className="mt-6 text-[#d9bfae] text-lg max-w-md leading-relaxed">{slides[slide].sub}</p>
+              <div className="mt-8 flex items-center gap-6 flex-wrap">
+                <Link href={slides[slide].href} className="bg-gold text-[#2a0a12] font-semibold tracking-widest uppercase text-sm px-8 py-3.5 hover:brightness-110">{slides[slide].cta}</Link>
+                <Link href="/shop" className="text-sm tracking-widest uppercase font-semibold underline underline-offset-8 decoration-[#f6ead2]/40 hover:decoration-[#f6ead2]">Shop All Bags &rarr;</Link>
+              </div>
             </div>
-            <div className="mt-14 flex justify-center">
-              <figure>
-                <ProductImage key={slides[slide].image} src={slides[slide].image} alt={slides[slide].alt} className="w-[260px] md:w-[320px] h-[340px] md:h-[420px] object-cover border border-neutral-200" />
-                <figcaption className="mt-3 text-[11px] tracking-[0.25em] uppercase text-neutral-400">{slides[slide].caption}</figcaption>
-              </figure>
-            </div>
+            <figure>
+              <ProductImage key={slides[slide].image} src={slides[slide].image} alt={slides[slide].alt} className="w-full h-[340px] md:h-[460px] object-cover border border-gold p-2" />
+            </figure>
           </div>
-          <p className="mt-12 text-[11px] md:text-xs text-neutral-400 tracking-[0.2em] uppercase">Cash on Delivery <span className="text-maroon mx-1">&middot;</span> bKash / Nagad <span className="text-maroon mx-1">&middot;</span> Free delivery over &#2547;3,000</p>
-          <div className="mt-10 pt-6 border-t border-neutral-200 flex items-center justify-center gap-6">
-            <button onClick={() => setSlide((slide - 1 + slides.length) % slides.length)} aria-label="Previous slide" className="text-neutral-400 hover:text-neutral-900 text-sm tracking-widest uppercase">&larr; Prev</button>
+          <p className="mt-12 text-[11px] md:text-xs text-[#d9bfae] tracking-[0.2em] uppercase">Cash on Delivery <span className="text-gold mx-1">&middot;</span> bKash / Nagad <span className="text-gold mx-1">&middot;</span> Free delivery over &#2547;3,000</p>
+          <div className="mt-8 pt-6 border-t border-[#f6ead2]/20 flex items-center gap-6">
+            <button onClick={() => setSlide((slide - 1 + slides.length) % slides.length)} aria-label="Previous slide" className="text-[#f6ead2]/60 hover:text-[#f6ead2] text-sm tracking-widest uppercase">&larr; Prev</button>
             <div className="flex gap-2">
-              {slides.map((_, i) => (<button key={i} onClick={() => setSlide(i)} aria-label={'Go to slide ' + (i + 1)} className={'h-px transition-all ' + (i === slide ? 'bg-neutral-900 w-10' : 'bg-neutral-300 w-5')} />))}
+              {slides.map((_, i) => (<button key={i} onClick={() => setSlide(i)} aria-label={'Go to slide ' + (i + 1)} className={'h-px transition-all ' + (i === slide ? 'bg-gold w-10' : 'bg-[#f6ead2]/30 w-5')} />))}
             </div>
-            <p className="font-serif text-lg text-neutral-500"><span className="text-neutral-900">{String(slide + 1).padStart(2, '0')}</span><span className="text-neutral-400 text-sm"> / {String(slides.length).padStart(2, '0')}</span></p>
-            <button onClick={() => setSlide((slide + 1) % slides.length)} aria-label="Next slide" className="text-neutral-400 hover:text-neutral-900 text-sm tracking-widest uppercase">Next &rarr;</button>
+            <p className="font-serif text-lg text-[#f6ead2]/60"><span className="text-[#f6ead2]">{String(slide + 1).padStart(2, '0')}</span><span className="text-sm"> / {String(slides.length).padStart(2, '0')}</span></p>
+            <button onClick={() => setSlide((slide + 1) % slides.length)} aria-label="Next slide" className="text-[#f6ead2]/60 hover:text-[#f6ead2] text-sm tracking-widest uppercase">Next &rarr;</button>
           </div>
         </div>
       </section>
