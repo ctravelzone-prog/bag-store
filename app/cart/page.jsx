@@ -5,15 +5,16 @@ import { useCart } from '../../lib/cart';
 import ProductImage from '../../components/ProductImage';
 export function formatBDT(n) { return '৳' + Number(n || 0).toLocaleString('en-US'); }
 export default function CartPage() {
-  const { items, setQty, remove, subtotal, clear } = useCart();
+  const { items, setQty, remove, subtotal, clear, user } = useCart();
   const [code, setCode] = useState('');
   const [coupon, setCoupon] = useState(null);
   const [cmsg, setCmsg] = useState('');
   async function applyCoupon() {
     setCmsg('');
-    const r = await fetch('/api/coupons'); const list = await r.json();
-    const c = list.find(x => x.code === code.trim().toUpperCase() && x.active);
-    if (!c) { setCmsg('Invalid coupon code.'); setCoupon(null); return; }
+    const r = await fetch('/api/coupons/validate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code, user: user || null }) });
+    const d = await r.json();
+    if (!r.ok) { setCmsg(d.error || 'Invalid coupon code.'); setCoupon(null); return; }
+    const c = d.coupon;
     if (subtotal < (c.minOrder || 0)) { setCmsg('This coupon needs minimum order ' + formatBDT(c.minOrder) + '.'); setCoupon(null); return; }
     setCoupon(c); setCmsg('Coupon applied: ' + c.discountPercent + '% off ✓');
   }

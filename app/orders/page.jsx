@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import OrderTimeline from '../../components/OrderTimeline';
 import Link from 'next/link';
 export function formatBDT(n) { return '৳' + Number(n || 0).toLocaleString('en-US'); }
 export default function OrdersPage() {
@@ -25,7 +26,8 @@ export default function OrdersPage() {
             <div className="flex justify-between flex-wrap gap-2"><p className="font-bold">{o.id}</p><span className="bg-maroon-soft text-maroon text-xs font-bold px-3 py-1 rounded-full">{o.status}</span></div>
             <p className="text-sm text-gray-500">{new Date(o.createdAt).toLocaleString()} · {o.paymentMethod}{o.trxId ? ' · TrxID: ' + o.trxId : ''}</p>
             <ul className="text-sm mt-2 list-disc pl-5">{o.items.map((i, idx) => <li key={idx}>{i.name} × {i.qty} — {formatBDT(i.price * i.qty)}</li>)}</ul>
-            <p className="font-bold text-maroon mt-2">Total: {formatBDT(o.total)}</p>
+            <OrderTimeline status={o.status} history={o.statusHistory || []} />
+            <p className="font-bold text-maroon mt-3">Total: {formatBDT(o.total)}</p>
             <Link href={'/order-success?orderId=' + encodeURIComponent(o.id)} className="text-sm text-maroon underline">View invoice →</Link>
           </div>
         ))}

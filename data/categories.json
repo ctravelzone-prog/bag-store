@@ -1,0 +1,7 @@
+[
+  {"id":"cat-handbag","name":"Handbag","description":"Elegant everyday and party handbags.","icon":"bag"},
+  {"id":"cat-tote","name":"Tote","description":"Spacious everyday tote bags.","icon":"shopping-bag"},
+  {"id":"cat-shoulder","name":"Shoulder Bag","description":"Classic shoulder bags with gold hardware.","icon":"bag"},
+  {"id":"cat-crossbody","name":"Crossbody","description":"Light hands-free crossbody bags.","icon":"heart"},
+  {"id":"cat-backpack","name":"Backpack","description":"Travel and university backpacks.","icon":"package"}
+]

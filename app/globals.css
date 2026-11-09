@@ -1,4 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-body { background: #faf7f5; color: #1a1a1a; }
+body { background: #fbfaf8; color: #1f1f1f; }
+input, select, textarea { font-size: 15px; }
+input:focus, select:focus, textarea:focus { outline: 2px solid #c9a22755; border-color: #c9a227; }

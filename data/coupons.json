@@ -1,1 +1,29 @@
-[{"active":true,"code":"WELCOME10","discountPercent":10,"minOrder":0},{"active":true,"code":"SABRINA15","discountPercent":15,"minOrder":2000}]
+[
+  {
+    "active": true,
+    "code": "WELCOME10",
+    "discountPercent": 10,
+    "minOrder": 0,
+    "target": "all",
+    "targetUserId": null,
+    "targetUserName": null
+  },
+  {
+    "active": true,
+    "code": "SABRINA15",
+    "discountPercent": 15,
+    "minOrder": 2000,
+    "target": "all",
+    "targetUserId": null,
+    "targetUserName": null
+  },
+  {
+    "code": "LOYAL15",
+    "discountPercent": 15,
+    "minOrder": 0,
+    "active": true,
+    "target": "regular",
+    "targetUserId": null,
+    "targetUserName": null
+  }
+]

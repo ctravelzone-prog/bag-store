@@ -1,12 +1,15 @@
 import { NextResponse } from 'next/server';
 import { readJson, writeJson } from '../../../lib/store';
+import { validateCoupon } from '../../../lib/server-coupons';
 export async function GET() { return NextResponse.json(readJson('coupons.json')); }
 export async function POST(req) {
   const b = await req.json();
   if (!b.code || !b.discountPercent) return NextResponse.json({ error: 'Code and discount % are required.' }, { status: 400 });
   const list = readJson('coupons.json');
   if (list.find(c => c.code === b.code.toUpperCase())) return NextResponse.json({ error: 'Coupon already exists.' }, { status: 400 });
-  const c = { code: b.code.toUpperCase(), discountPercent: Number(b.discountPercent), minOrder: Number(b.minOrder || 0), active: true };
+  const target = ['all', 'regular', 'customer'].includes(b.target) ? b.target : 'all';
+  if (target === 'customer' && !b.targetUserId) return NextResponse.json({ error: 'Please choose a customer for a personal coupon.' }, { status: 400 });
+  const c = { code: b.code.toUpperCase(), discountPercent: Number(b.discountPercent), minOrder: Number(b.minOrder || 0), active: true, target, targetUserId: target === 'customer' ? b.targetUserId : null, targetUserName: target === 'customer' ? (b.targetUserName || '') : null };
   list.push(c); writeJson('coupons.json', list);
   return NextResponse.json(c, { status: 201 });
 }

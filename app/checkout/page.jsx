@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useCart } from '../../lib/cart';
 export function formatBDT(n) { return '৳' + Number(n || 0).toLocaleString('en-US'); }
 export default function CheckoutPage() {
-  const { items, subtotal, clear } = useCart();
+  const { items, subtotal, clear, user } = useCart();
   const router = useRouter();
   const [form, setForm] = useState({ name: '', phone: '', address: '', city: '', area: 'inside', payment: 'Cash on Delivery', trxId: '' });
   const [couponCode, setCouponCode] = useState('');
@@ -13,13 +13,15 @@ export default function CheckoutPage() {
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
   useEffect(() => { try { const c = JSON.parse(localStorage.getItem('tos-coupon') || 'null'); if (c) { setCoupon(c); setCouponCode(c.code); } } catch {} }, []);
+  useEffect(() => { if (user) setForm(f => ({ ...f, name: f.name || user.name || '', phone: f.phone || user.phone || '' })); }, [user]);
   const discount = coupon ? Math.round(subtotal * coupon.discountPercent / 100) : 0;
   const shipping = subtotal === 0 ? 0 : (subtotal - discount >= 3000 ? 0 : (form.area === 'outside' ? 120 : 60));
   const total = subtotal - discount + shipping;
   async function applyCoupon() {
-    const r = await fetch('/api/coupons'); const list = await r.json();
-    const c = list.find(x => x.code === couponCode.trim().toUpperCase() && x.active);
-    if (!c) { setErr('Invalid coupon code.'); return; }
+    const r = await fetch('/api/coupons/validate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: couponCode, user: user || null }) });
+    const d = await r.json();
+    if (!r.ok) { setErr(d.error || 'Invalid coupon code.'); setCoupon(null); return; }
+    const c = d.coupon;
     if (subtotal < (c.minOrder || 0)) { setErr('Coupon needs minimum order ' + formatBDT(c.minOrder) + '.'); return; }
     setCoupon(c); localStorage.setItem('tos-coupon', JSON.stringify(c)); setErr('');
   }
@@ -29,7 +31,7 @@ export default function CheckoutPage() {
     if (!/^01[3-9]\d{8}$/.test(form.phone.trim())) { setErr('Please enter a valid 11-digit BD phone number (01XXXXXXXXX).'); return; }
     if ((form.payment === 'bKash' || form.payment === 'Nagad') && !form.trxId.trim()) { setErr('TrxID is required for ' + form.payment + ' payment.'); return; }
     setBusy(true);
-    const r = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ customer: { name: form.name, phone: form.phone.trim(), address: form.address, city: form.city }, items: items.map(i => ({ slug: i.slug, qty: i.qty, color: i.color })), deliveryArea: form.area, paymentMethod: form.payment, trxId: form.trxId.trim(), couponCode: coupon ? coupon.code : '' }) });
+    const r = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user: user ? { id: user.id, email: user.email, phone: user.phone } : null, customer: { name: form.name, phone: form.phone.trim(), address: form.address, city: form.city, email: user?.email || '' }, items: items.map(i => ({ slug: i.slug, qty: i.qty, color: i.color })), deliveryArea: form.area, paymentMethod: form.payment, trxId: form.trxId.trim(), couponCode: coupon ? coupon.code : '' }) });
     const d = await r.json();
     setBusy(false);
     if (!r.ok) { setErr(d.error || 'Order failed. Please try again.'); return; }
